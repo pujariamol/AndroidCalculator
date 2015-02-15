@@ -15,6 +15,7 @@ public class MainActivity extends ActionBarActivity {
     private TextView txtBoxResults;
     private double result,inputOne,inputTwo = 0 ;
     private String operator = "";
+    private boolean operatorSet = false;
 
 
     @Override
@@ -51,55 +52,78 @@ public class MainActivity extends ActionBarActivity {
     public void onButtonClick(View view) {
         String buttonLabel = ((Button)view).getText().toString();
         String currentContent = txtBoxResults.getText().toString();
-        double val =  Double.valueOf(currentContent);
-        if(val == 0){
+
+        if(operatorSet){
             txtBoxResults.setText("");
+            operatorSet = false;
         }
         txtBoxResults.setText(txtBoxResults.getText().toString().concat(buttonLabel));
 
     }
 
     private void getOutput(){
-        boolean flag = false;
-        switch(operator){
-            case "-" :
-                result = inputOne - inputTwo;
-                flag = true;
-                break;
-            case "+" :
-                result = inputOne + inputTwo;
-                flag= true;
-                break;
-        }
-        if(flag){
-            inputOne = 0;
-            inputTwo = 0;
-        }
+        if(inputOne != 0 && inputTwo != 0) {
+            boolean flag = false;
+            switch (operator) {
+                case "-":
+                    result = inputOne - inputTwo;
+                    inputOne = result;
+                    flag = true;
+                    break;
+                case "+":
+                    result = inputOne + inputTwo;
+                    inputOne = result;
+                    flag = true;
+                    break;
+            }
+            if (flag) {
 
+                inputTwo = 0;
+            }
+            txtBoxResults.setText(String.valueOf(result));
+        }
     }
 
     public void onOperatorClick(View view) {
         String buttonLabel = ((Button)view).getText().toString();
         String currentContent =  txtBoxResults.getText().toString();
+
         if (inputOne == 0) {
             inputOne = Double.valueOf(currentContent);
         }else if(inputTwo == 0) {
             inputTwo = Double.valueOf(currentContent);
         }
-        txtBoxResults.setText("0");
-        switch(buttonLabel){
-            case "=":
-                if(inputOne != 0 && inputTwo != 0)
-                    getOutput();
-                txtBoxResults.setText(String.valueOf(result));
-                break;
-            case "C":
-                txtBoxResults.setText("0");
-                reset();
-                break;
-            default:
-                operator = buttonLabel;
+        System.out.println("First Number = " + inputOne + " Second Number =" + inputTwo );
+        if(buttonLabel.equals("-") || buttonLabel.equals("+")){
+            System.out.println("+ - operator clicked");
+            getOutput();
+            operator = buttonLabel;
+            operatorSet =true;
+        }else if(buttonLabel.equals("=")){
+            getOutput();
+        }else if(buttonLabel.equals("C")){
+            txtBoxResults.setText("0");
+            reset();
         }
+//        switch(buttonLabel){
+//            case "-":
+//                operator = buttonLabel;
+//                getOutput();
+//                break;
+//            case "+":
+//                operator = buttonLabel;
+//                break;
+//            case "=":
+//                getOutput();
+//                txtBoxResults.setText(String.valueOf(result));
+//                break;
+//            case "C":
+//                txtBoxResults.setText("0");
+//                reset();
+//                break;
+//            default:
+//
+//        }
     }
 
     private void reset(){
